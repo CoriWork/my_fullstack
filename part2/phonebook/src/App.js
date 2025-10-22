@@ -1,5 +1,41 @@
 import { useState } from 'react'
 
+const Filter = ({filterName, handleFilterNameChange}) => {
+  return (
+    <div>
+      filter shown with <input value={filterName} onChange={handleFilterNameChange} />
+    </div>
+  )
+}
+
+const PersonForm = ({handleSubmit, newName, handleNameChange, newPhoneNumber, handlePhoneNumberChange}) => {
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        name: <input value={newName} onChange={handleNameChange} />
+      </div>
+      <div>
+        number: <input value={newPhoneNumber} onChange={handlePhoneNumberChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const Persons = ({filteredPersons}) => {
+  return (
+    <div>
+      <table>
+        <thead><tr><th>Name</th><th>Number</th></tr></thead>
+        <tbody>{filteredPersons.map(person => <tr key={person.id}><td>{person.name}</td><td>{person.number}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -46,30 +82,11 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <div>
-        filter shown with <input value={filterName} onChange={handleFilterNameChange} />
-      </div>
+      <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange} />
       <h1>add a new</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newPhoneNumber} onChange={handlePhoneNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm handleSubmit={handleSubmit} handleNameChange={handleNameChange} handlePhoneNumberChange={handlePhoneNumberChange} newName={newName} newPhoneNumber={newPhoneNumber} />
       <h1>Numbers</h1>
-      <div>
-        <table>
-          <thead><tr><th>Name</th><th>Number</th></tr></thead>
-          <tbody>{filteredPersons.map(person => <tr key={person.id}><td>{person.name}</td><td>{person.number}</td></tr>)}
-          </tbody>
-        </table>
-        
-      </div>
+      <Persons filteredPersons={filteredPersons} /> 
     </div>
   )
 }
