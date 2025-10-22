@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import phoneService from './services/phones'
 import {Filter, PersonForm, Persons} from './components/phoneComponents'
 
@@ -11,6 +10,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('useEffect :>> ');
+    console.log();
     phoneService.getAll()
     .then(initPersons => setPersons(initPersons))
   }, [])
@@ -29,9 +29,9 @@ const App = () => {
     const newPerson = {
       name : newName,
       number : newPhoneNumber,
-      id : persons.length + 1
+      id : `${Math.floor(Date.now())}`
     }
-    phoneService.create(newPerson).then(newObject => setPersons(persons.concat(newObject)))
+    phoneService.create(newPerson).then(addedPerson => setPersons(persons.concat(addedPerson)))
     setNewName('')
     setNewPhoneNumber('')
   }
@@ -51,6 +51,11 @@ const App = () => {
     setFilterName(event.target.value)
   }
 
+  const handleDelete = (id) => {
+    window.confirm('hello')
+    phoneService.remove(id).then(removedPerson => setPersons(persons.filter(person => person.id !== removedPerson.id)))
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -58,7 +63,7 @@ const App = () => {
       <h1>add a new</h1>
       <PersonForm handleSubmit={handleSubmit} handleNameChange={handleNameChange} handlePhoneNumberChange={handlePhoneNumberChange} newName={newName} newPhoneNumber={newPhoneNumber} />
       <h1>Numbers</h1>
-      <Persons filteredPersons={filteredPersons} /> 
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} /> 
     </div>
   )
 }
