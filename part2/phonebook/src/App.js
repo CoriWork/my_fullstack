@@ -10,7 +10,6 @@ const App = () => {
 
   useEffect(() => {
     console.log('useEffect :>> ');
-    console.log();
     phoneService.getAll()
     .then(initPersons => setPersons(initPersons))
   }, [])
@@ -51,9 +50,9 @@ const App = () => {
     setFilterName(event.target.value)
   }
 
-  const handleDelete = (id) => {
-    window.confirm('hello')
-    phoneService.remove(id).then(removedPerson => setPersons(persons.filter(person => person.id !== removedPerson.id)))
+  const handleDelete = (person) => {
+    window.confirm(`You are going to delete ${person.name}!`)
+    phoneService.remove(person.id).then(removedPerson => setPersons(persons.filter(person => person.id !== removedPerson.id)))
   }
 
   return (
