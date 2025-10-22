@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import phoneService from './services/phones'
 import {Filter, PersonForm, Persons} from './components/phoneComponents'
+import Notification from './components/notificatoin'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     console.log('useEffect :>> ');
@@ -39,6 +41,8 @@ const App = () => {
     phoneService.create(newPerson).then(addedPerson => setPersons(persons.concat(addedPerson)))
     setNewName('')
     setNewPhoneNumber('')
+    setMessage(`Added ${newPerson.name}`)
+    setTimeout(() => setMessage(null), 2000)
   }
 
   const handleNameChange = (event) => {
@@ -65,6 +69,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange} />
       <h1>add a new</h1>
       <PersonForm handleSubmit={handleSubmit} handleNameChange={handleNameChange} handlePhoneNumberChange={handlePhoneNumberChange} newName={newName} newPhoneNumber={newPhoneNumber} />
