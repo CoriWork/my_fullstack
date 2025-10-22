@@ -19,10 +19,16 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    if(persons.some(person => person.name === newName)){
-      alert(`${newName} is already added to phonebook`)
-      setNewName('')
-      setNewPhoneNumber('')
+    const existingPerson = persons.find(person => person.name === newName)
+    console.log('existingPerson :>> ', existingPerson);
+    if(existingPerson){
+      const is_confirmed = window.confirm(`${newName} is already added to phonebook, replace the older number with the new one?`)
+      if(is_confirmed){
+        const changedPerson = {...existingPerson, number : newPhoneNumber}
+        phoneService.update(existingPerson.id, changedPerson).then(updatedPerson => persons.map(person => person.id === updatedPerson ? changedPerson : person))
+        setNewName('')
+        setNewPhoneNumber('')
+      }
       return
     }
     const newPerson = {
@@ -51,7 +57,8 @@ const App = () => {
   }
 
   const handleDelete = (person) => {
-    window.confirm(`You are going to delete ${person.name}!`)
+    const is_confirmed = window.confirm(`You are going to delete ${person.name}!`)
+    if(!is_confirmed) return
     phoneService.remove(person.id).then(removedPerson => setPersons(persons.filter(person => person.id !== removedPerson.id)))
   }
 
