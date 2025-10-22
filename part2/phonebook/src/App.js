@@ -1,41 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-
-const Filter = ({filterName, handleFilterNameChange}) => {
-  return (
-    <div>
-      filter shown with <input value={filterName} onChange={handleFilterNameChange} />
-    </div>
-  )
-}
-
-const PersonForm = ({handleSubmit, newName, handleNameChange, newPhoneNumber, handlePhoneNumberChange}) => {
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        name: <input value={newName} onChange={handleNameChange} />
-      </div>
-      <div>
-        number: <input value={newPhoneNumber} onChange={handlePhoneNumberChange} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  )
-}
-
-const Persons = ({filteredPersons}) => {
-  return (
-    <div>
-      <table>
-        <thead><tr><th>Name</th><th>Number</th></tr></thead>
-        <tbody>{filteredPersons.map(person => <tr key={person.id}><td>{person.name}</td><td>{person.number}</td></tr>)}
-        </tbody>
-      </table>
-    </div>
-  )
-}
+import phoneService from './services/phones'
+import {Filter, PersonForm, Persons} from './components/phoneComponents'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -45,12 +11,8 @@ const App = () => {
 
   useEffect(() => {
     console.log('useEffect :>> ');
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('response :>> ', response);
-        setPersons(response.data)
-      })
+    phoneService.getAll()
+    .then(initPersons => setPersons(initPersons))
   }, [])
 
   const filteredPersons = persons.filter(
@@ -64,8 +26,12 @@ const App = () => {
       setNewPhoneNumber('')
       return
     }
-    const newPersons = persons.concat({name : newName, number : newPhoneNumber, id : persons.length + 1})
-    setPersons(newPersons)
+    const newPerson = {
+      name : newName,
+      number : newPhoneNumber,
+      id : persons.length + 1
+    }
+    phoneService.create(newPerson).then(newObject => setPersons(persons.concat(newObject)))
     setNewName('')
     setNewPhoneNumber('')
   }
