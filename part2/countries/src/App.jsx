@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import countryServices from './services/countryServices'
 import axios from "axios";
 
-const Filter = ({filterValue, value, handleFilterValueChange}) => {
+const Filter = ({ filterValue, handleFilterValueChange }) => {
   return (
     <div>
       find countries <input value={filterValue} onChange={handleFilterValueChange} />
@@ -10,22 +10,22 @@ const Filter = ({filterValue, value, handleFilterValueChange}) => {
   )
 }
 
-const CountryCard = ({country}) => {
+const CountryCard = ({ country }) => {
   return (
     <div>
       <h1>{country.name.common}</h1>
       <table>
         <thead></thead>
         <tbody>
-        <tr>
-          <td>Capital</td>
-          {console.log(country)}
-          {country.capital.map(city => <td key={city}>{city}</td>)}
-        </tr>
-        <tr>
-          <td>Area</td>
-          <td>{country.area}</td>
-        </tr>
+          <tr>
+            <td>Capital</td>
+            {console.log(country)}
+            {country.capital.map(city => <td key={city}>{city}</td>)}
+          </tr>
+          <tr>
+            <td>Area</td>
+            <td>{country.area}</td>
+          </tr>
         </tbody>
       </table>
       <h2>Languages</h2>
@@ -37,22 +37,22 @@ const CountryCard = ({country}) => {
   )
 }
 
-const WeatherCard = ({city, latlng}) => {
+const WeatherCard = ({ city, latlng }) => {
   const [weather, setWeather] = useState(null)
   const [isCityAvailable, setIsCityAvailable] = useState(true)
   const api_key = import.meta.env.VITE_WEATHER_KEY
   const baseUrl = 'https://api.openweathermap.org/data/2.5/weather?'
 
   useEffect(() => {
-    if (!city && latlng.length !== 2){
+    if (!city && latlng.length !== 2) {
       setIsCityAvailable(false)
       return
     }
 
     axios.get(`${baseUrl}q=${city}&appid=${api_key}&units=metric`)
-    .then(response => {
-      setWeather(response.data)
-    })
+      .then(response => {
+        setWeather(response.data)
+      })
   }, [city, latlng])
 
   if (!city && latlng.length !== 2) setIsCityAvailable(false)
@@ -69,21 +69,21 @@ const WeatherCard = ({city, latlng}) => {
     <div>
       <h2>{`Weather in ${city}`}</h2>
       <p>{`Temperature ${temperature} Celsius`}</p>
-      <img src={weatherIconUrl} alt={`weather icon`}/>
+      <img src={weatherIconUrl} alt={`weather icon`} />
       <p>{`Wind ${windSpeed} m/s`}</p>
     </div>
   )
 }
 
-const CountryDisplay = ({countryList, handleShowChange}) => {
-  if(countryList.length > 10){
+const CountryDisplay = ({ countryList, handleShowChange }) => {
+  if (countryList.length > 10) {
     return (
       <div>
         <p>Too many matches, specify another filter</p>
       </div>
     )
   }
-  else if(countryList.length === 1){
+  else if (countryList.length === 1) {
     const country = countryList[0];
     return (
       <div>
@@ -107,7 +107,7 @@ const App = () => {
 
   useEffect(() => {
     countryServices.getAll().
-    then(allCountries => setCountries(allCountries.filter(country => country.name.common.toLowerCase().includes(filterCountry.toLowerCase()))))
+      then(allCountries => setCountries(allCountries.filter(country => country.name.common.toLowerCase().includes(filterCountry.toLowerCase()))))
     console.log('countries :>> ', countries);
   }, [filterCountry])
 
@@ -120,12 +120,12 @@ const App = () => {
     setCountries(countries.filter(country => country.name.common === selectedCountry.name.common))
   }
 
-  if(!countries) return
+  if (!countries) return
   return (
     <div>
       <Filter filterValue={filterCountry} handleFilterValueChange={handleFilterCountryChange} />
       <CountryDisplay countryList={countries} handleShowChange={handleShowChange} />
     </div>
-   )
+  )
 }
 export default App
