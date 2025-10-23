@@ -9,7 +9,34 @@ const Filter = ({filterValue, value, handleFilterValueChange}) => {
   )
 }
 
-const CountryDisplay = ({countryList}) => {
+const CountryCard = ({country}) => {
+  return (
+    <div>
+      <h1>{country.name.common}</h1>
+      <table>
+        <thead></thead>
+        <tbody>
+        <tr>
+          <td>Capital</td>
+          {console.log(country)}
+          {country.capital.map(city => <td key={city}>{city}</td>)}
+        </tr>
+        <tr>
+          <td>Area</td>
+          <td>{country.area}</td>
+        </tr>
+        </tbody>
+      </table>
+      <h2>Languages</h2>
+      <ul>
+        {Object.values(country.languages).map(language => (<li key={language}>{language}</li>))}
+      </ul>
+      <img src={country.flags.png} alt="flags" />
+    </div>
+  )
+}
+
+const CountryDisplay = ({countryList, handleShowChange}) => {
   if(countryList.length > 10){
     return (
       <div>
@@ -20,34 +47,13 @@ const CountryDisplay = ({countryList}) => {
   else if(countryList.length === 1){
     const country = countryList[0];
     return (
-      <div>
-        <h1>{country.name.common}</h1>
-        <table>
-          <thead></thead>
-          <tbody>
-            <tr>
-              <td>Capital</td>
-              {console.log(country)}
-              {country.capital.map(city => <td key={city}>{city}</td>)}
-            </tr>
-            <tr>
-              <td>Area</td>
-              <td>{country.area}</td>
-            </tr>
-          </tbody>
-        </table>
-        <h2>Languages</h2>
-        <ul>
-          {Object.values(country.languages).map(language => (<li key={language}>{language}</li>))}
-        </ul>
-        <img src={country.flags.png} alt="flags" />
-      </div>
+      <CountryCard country={country} />
     )
   }
   else {
     return (
       <ul>
-        {countryList.map(country => <li key={country.name.common}>{country.name.common}</li>)}
+        {countryList.map(country => <li key={country.name.common}>{country.name.common} <button onClick={() => handleShowChange(country)}>show</button></li>)}
       </ul>
     )
   }
@@ -68,11 +74,15 @@ const App = () => {
     setFilterCountry(event.target.value)
   }
 
+  const handleShowChange = (selectedCountry) => {
+    setCountries(countries.filter(country => country.name.common === selectedCountry.name.common))
+  }
+
   if(!countries) return
   return (
     <div>
       <Filter filterValue={filterCountry} handleFilterValueChange={handleFilterCountryChange} />
-      <CountryDisplay countryList={countries}/>
+      <CountryDisplay countryList={countries} handleShowChange={handleShowChange} />
     </div>
    )
 }
