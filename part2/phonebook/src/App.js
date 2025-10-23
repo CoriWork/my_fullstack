@@ -48,6 +48,7 @@ const App = () => {
       }
       return
     }
+    
     const newPerson = {
       name : newName,
       number : newPhoneNumber,
