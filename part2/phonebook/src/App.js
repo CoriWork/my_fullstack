@@ -9,6 +9,7 @@ const App = () => {
   const [newPhoneNumber, setNewPhoneNumber] = useState('')
   const [filterName, setFilterName] = useState('')
   const [message, setMessage] = useState(null)
+  const [is_success, setIsSuccess] = useState(true)
 
   useEffect(() => {
     console.log('useEffect :>> ');
@@ -27,9 +28,23 @@ const App = () => {
       const is_confirmed = window.confirm(`${newName} is already added to phonebook, replace the older number with the new one?`)
       if(is_confirmed){
         const changedPerson = {...existingPerson, number : newPhoneNumber}
-        phoneService.update(existingPerson.id, changedPerson).then(updatedPerson => persons.map(person => person.id === updatedPerson ? changedPerson : person))
-        setNewName('')
-        setNewPhoneNumber('')
+        phoneService.update(existingPerson.id, changedPerson)
+        .then(updatedPerson => {
+          persons.map(person => person.id === updatedPerson ? changedPerson : person)
+          setNewName('')
+          setNewPhoneNumber('')
+          setIsSuccess(true)
+          setMessage(`Updated ${changedPerson.name}`)
+          setTimeout(() => setMessage(null), 2000)
+        })
+        .catch(response => {
+          setNewName('')
+          setNewPhoneNumber('')
+          setIsSuccess(false)
+          setMessage(`Information of ${changedPerson.name} has been removed from server`)
+          setTimeout(() => setMessage(null), 2000)
+          setPersons(persons.filter(person => person.id !== changedPerson.id))
+        }) 
       }
       return
     }
@@ -41,6 +56,7 @@ const App = () => {
     phoneService.create(newPerson).then(addedPerson => setPersons(persons.concat(addedPerson)))
     setNewName('')
     setNewPhoneNumber('')
+    setIsSuccess(true)
     setMessage(`Added ${newPerson.name}`)
     setTimeout(() => setMessage(null), 2000)
   }
@@ -69,7 +85,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={message} />
+      <Notification is_success={is_success} message={message} />
       <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange} />
       <h1>add a new</h1>
       <PersonForm handleSubmit={handleSubmit} handleNameChange={handleNameChange} handlePhoneNumberChange={handlePhoneNumberChange} newName={newName} newPhoneNumber={newPhoneNumber} />
